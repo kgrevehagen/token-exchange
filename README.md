@@ -35,4 +35,4 @@ pytest test_lambda.py
 3. Hook up some trigger to call your function, e.g. API Gateway.
 
 ## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
