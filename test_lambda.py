@@ -5,17 +5,21 @@ from lambda_function import lambda_handler
 
 @pytest.fixture
 def set_env(monkeypatch):
-    monkeypatch.setenv("CLIENT_ID", "test-client-id")
-    monkeypatch.setenv("CLIENT_SECRET", "test-client-secret")
     monkeypatch.setenv("TOKEN_ENDPOINT", "https://auth.example.com/oauth2/token")
-    monkeypatch.setenv("REDIRECT_URI", "https://example.com/callback")
 
 @patch("requests.post")
 def test_invalid_code(mock_post, set_env):
     mock_post.return_value.status_code = 400
     mock_post.return_value.json.return_value = {"error": "invalid_grant"}
 
-    event = {"queryStringParameters": {"code": "invalid_code"}}
+    event = {
+        "queryStringParameters": {
+            "code": "invalid_code",
+            "client_id": "client_id",
+            "code_verifier": "code_verifier",
+            "redirect_uri": "redirect_uri"
+        }
+    }
     response = lambda_handler(event, None)
     
     body = json.loads(response['body'])
@@ -28,7 +32,14 @@ def test_successful_token_exchange(mock_post, set_env):
     mock_post.return_value.status_code = 200
     mock_post.return_value.json.return_value = {"access_token": "test-access-token"}
 
-    event = {"queryStringParameters": {"code": "valid_code"}}
+    event = {
+        "queryStringParameters": {
+            "code": "valid_code",
+            "client_id": "client_id",
+            "code_verifier": "code_verifier",
+            "redirect_uri": "redirect_uri"
+        }
+    }
     response = lambda_handler(event, None)
 
     body = json.loads(response['body'])

@@ -4,17 +4,17 @@ import os
 
 def lambda_handler(event, context):
     authorization_code = event['queryStringParameters']['code']
+    client_id = event['queryStringParameters']['client_id']
+    code_verifier = event['queryStringParameters']['code_verifier']
+    redirect_uri = event['queryStringParameters']['redirect_uri']
 
-    client_id = os.environ['CLIENT_ID']
-    client_secret = os.environ['CLIENT_SECRET']
     token_endpoint = os.environ['TOKEN_ENDPOINT']
-    redirect_uri = os.environ['REDIRECT_URI']
-    
+
     data = {
         'grant_type': 'authorization_code',
         'code': authorization_code,
         'client_id': client_id,
-        'client_secret': client_secret,
+        'code_verifier': code_verifier,
         'redirect_uri': redirect_uri
     }
 
@@ -22,5 +22,8 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': response.status_code,
+        'headers': {
+            'Access-Control-Allow-Origin': '*'
+        },
         'body': json.dumps(response.json())
     }
